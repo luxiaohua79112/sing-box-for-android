@@ -6,11 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import io.nekohasekai.libbox.Libbox
+import io.nekohasekai.libbox.StatusMessage
 import io.nekohasekai.sfa.R
 import io.nekohasekai.sfa.bg.BoxService
 import io.nekohasekai.sfa.constant.Status
 import io.nekohasekai.sfa.databinding.FragmentSimpleDashboardBinding
 import io.nekohasekai.sfa.ui.MainActivity
+import io.nekohasekai.sfa.utils.CommandClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class SimpleDashboardFragment : Fragment(R.layout.fragment_simple_dashboard) {
@@ -18,6 +24,12 @@ class SimpleDashboardFragment : Fragment(R.layout.fragment_simple_dashboard) {
     private val activity: MainActivity? get() = super.getActivity() as MainActivity?
     private var binding: FragmentSimpleDashboardBinding? = null
 
+    private val cmdClientHandler =
+        CommandClient(lifecycleScope, CommandClient.ConnectionType.Status, CmdClientHandler())
+
+    /////////////////////////////////////////////////////////////////////
+    ///////////////// Methods of Override Fragment /////////////////////
+    ////////////////////////////////////////////////////////////////////
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -39,6 +51,7 @@ class SimpleDashboardFragment : Fragment(R.layout.fragment_simple_dashboard) {
 
                 Status.Started -> {
                     binding.connectContainer.isVisible = true // 显示连接后的状态
+                    cmdClientHandler.connect()
 
                     binding.fab.setImageResource(R.drawable.ic_stop_24)
                     binding.fab.show()
@@ -87,9 +100,48 @@ class SimpleDashboardFragment : Fragment(R.layout.fragment_simple_dashboard) {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
+        cmdClientHandler.disconnect()
     }
 
 
+    //////////////////////////////////////////////////////////////////////////
+    ////////////////////////// UI Message or Events Handler //////////////////
+//////////////////////////////////////////////////////////////////////////
+    inner class CmdClientHandler : CommandClient.Handler {
 
+        override fun onConnected() {
+            val binding = binding ?: return
+            lifecycleScope.launch(Dispatchers.Main) {
+                binding.memoryText.text = getString(R.string.loading)
+                binding.goroutinesText.text = getString(R.string.loading)
+            }
+        }
 
+        override fun onDisconnected() {
+            val binding = binding ?: return
+            lifecycleScope.launch(Dispatchers.Main) {
+                binding.memoryText.text = getString(R.string.loading)
+                binding.goroutinesText.text = getString(R.string.loading)
+            }
+        }
+
+        override fun updateStatus(status: StatusMessage) {
+            val binding = binding ?: return
+            lifecycleScope.launch(Dispatchers.Main) {
+                binding.memoryText.text = Libbox.formatBytes(status.memory)
+                binding.goroutinesText.text = status.goroutines.toString()
+                val trafficAvailable = status.trafficAvailable
+                binding.trafficContainer.isVisible = trafficAvailable
+                if (trafficAvailable) {
+                    binding.inboundConnectionsText.text = status.connectionsIn.toString()
+                    binding.outboundConnectionsText.text = status.connectionsOut.toString()
+                    binding.uplinkText.text = Libbox.formatBytes(status.uplink) + "/s"
+                    binding.downlinkText.text = Libbox.formatBytes(status.downlink) + "/s"
+                    binding.uplinkTotalText.text = Libbox.formatBytes(status.uplinkTotal)
+                    binding.downlinkTotalText.text = Libbox.formatBytes(status.downlinkTotal)
+                }
+            }
+        }
+
+    }
 }
