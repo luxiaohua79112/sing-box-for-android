@@ -15,7 +15,7 @@
         app:srcCompat="@drawable/ic_play_arrow_24" />
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/container"
+        android:id="@+id/connect_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
@@ -36,7 +36,7 @@
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:orientation="vertical"
-                android:visibility="gone"
+                android:visibility="visible"
                 tools:visibility="visible">
 
                 <LinearLayout
@@ -237,7 +237,7 @@
                     android:clipChildren="false"
                     android:clipToPadding="false"
                     android:orientation="horizontal"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     tools:visibility="visible">
 
                     <com.google.android.material.card.MaterialCardView

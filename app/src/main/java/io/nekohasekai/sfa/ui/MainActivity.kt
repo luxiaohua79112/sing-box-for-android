@@ -102,8 +102,8 @@ class MainActivity : AbstractActivity<ActivityMainBinding>(),
         navDestination: NavDestination,
         bundle: Bundle?
     ) {
-        val destinationId = navDestination.id
-        binding.dashboardTabContainer.isVisible = destinationId == R.id.navigation_dashboard
+     //   val destinationId = navDestination.id
+     //   binding.dashboardTabContainer.isVisible = destinationId == R.id.navigation_dashboard
     }
 
     override public fun onNewIntent(intent: Intent) {
