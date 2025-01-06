@@ -47,46 +47,46 @@ class LogFragment : Fragment(), CommandClient.Handler {
         activity.serviceStatus.observe(viewLifecycleOwner) {
             when (it) {
                 Status.Stopped -> {
-                    binding.fab.setImageResource(R.drawable.ic_play_arrow_24)
-                    binding.fab.show()
+//                    binding.fab.setImageResource(R.drawable.ic_play_arrow_24)
+//                    binding.fab.show()
                     binding.statusText.setText(R.string.status_default)
                 }
 
                 Status.Starting -> {
-                    binding.fab.hide()
+//                    binding.fab.hide()
                     binding.statusText.setText(R.string.status_starting)
                 }
 
                 Status.Started -> {
                     commandClient.connect()
-                    binding.fab.setImageResource(R.drawable.ic_stop_24)
-                    binding.fab.show()
-                    binding.fab.isEnabled = true
+//                    binding.fab.setImageResource(R.drawable.ic_stop_24)
+//                    binding.fab.show()
+//                    binding.fab.isEnabled = true
                     binding.statusText.setText(R.string.status_started)
                 }
 
                 Status.Stopping -> {
-                    binding.fab.hide()
+//                    binding.fab.hide()
                     binding.statusText.setText(R.string.status_stopping)
                 }
 
                 else -> {}
             }
         }
-        binding.fab.setOnClickListener {
-            when (activity.serviceStatus.value) {
-                Status.Stopped -> {
-                    it.isEnabled = false
-                    activity.startService()
-                }
-
-                Status.Started -> {
-                    BoxService.stop()
-                }
-
-                else -> {}
-            }
-        }
+//        binding.fab.setOnClickListener {
+//            when (activity.serviceStatus.value) {
+//                Status.Stopped -> {
+//                    it.isEnabled = false
+//                    activity.startService()
+//                }
+//
+//                Status.Started -> {
+//                    BoxService.stop()
+//                }
+//
+//                else -> {}
+//            }
+//        }
     }
 
     private fun updateViews(removeLen: Int = 0, insertLen: Int = 0) {
