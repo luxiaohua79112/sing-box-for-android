@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="io.nekohasekai.sfa.ui.main.DashboardFragment"
+        android:name="io.nekohasekai.sfa.ui.main.SimpleDashboardFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
 
