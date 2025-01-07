@@ -9,6 +9,7 @@ import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -29,9 +30,11 @@ import io.nekohasekai.libbox.ProfileContent
 import io.nekohasekai.sfa.Application
 import io.nekohasekai.sfa.R
 import io.nekohasekai.sfa.bg.ServiceConnection
+import io.nekohasekai.sfa.bg.ServiceConnection.Companion
 import io.nekohasekai.sfa.bg.ServiceNotification
 import io.nekohasekai.sfa.constant.Action
 import io.nekohasekai.sfa.constant.Alert
+import io.nekohasekai.sfa.constant.EnabledType
 import io.nekohasekai.sfa.constant.ServiceMode
 import io.nekohasekai.sfa.constant.Status
 import io.nekohasekai.sfa.database.Profile
@@ -42,14 +45,19 @@ import io.nekohasekai.sfa.databinding.ActivityMainBinding
 import io.nekohasekai.sfa.ktx.errorDialogBuilder
 import io.nekohasekai.sfa.ktx.hasPermission
 import io.nekohasekai.sfa.ktx.launchCustomTab
+import io.nekohasekai.sfa.ktx.text
 import io.nekohasekai.sfa.ui.profile.NewProfileActivity
+import io.nekohasekai.sfa.ui.profile.NewProfileActivity.FileSource
 import io.nekohasekai.sfa.ui.shared.AbstractActivity
+import io.nekohasekai.sfa.utils.HTTPClient
 import io.nekohasekai.sfa.utils.MIUIUtils
 import io.nekohasekai.sfa.vendor.Vendor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.util.Date
 
 class MainActivity : AbstractActivity<ActivityMainBinding>(),
@@ -425,5 +433,45 @@ class MainActivity : AbstractActivity<ActivityMainBinding>(),
         connection.disconnect()
         super.onDestroy()
     }
+
+
+    ////////////////////////////////////////////////////////////////////
+    ////////////////// 检测自动配置的 Profile，至少保留1个 //////////////////
+    ////////////////////////////////////////////////////////////////////
+
+    fun readJsonFromRaw(context: Context, resId: Int): String {
+        context.resources.openRawResource(resId).use { inputStream ->
+            InputStreamReader(inputStream).use { reader ->
+                val stringBuilder = StringBuilder()
+                reader.forEachLine { stringBuilder.append(it) }
+                return stringBuilder.toString()
+            }
+        }
+    }
+
+    public suspend fun autoConfigProfile() {
+        val profileList = ProfileManager.list().toMutableList()
+        if (profileList.isNotEmpty()) {  // 至少有一个配置
+            Log.d(TAG, "<autoConfigProfile> already have config")
+            return
+        }
+
+        val typedProfile = TypedProfile()
+        val profile = Profile(name = "default", typed = typedProfile)
+        profile.userOrder = ProfileManager.nextOrder()
+        val fileID = ProfileManager.nextFileID()
+        val configDirectory = File(filesDir, "configs").also { it.mkdirs() }
+        val configFile = File(configDirectory, "$fileID.json")
+        typedProfile.path = configFile.path
+        typedProfile.type = TypedProfile.Type.Local
+
+        var jsonContext = readJsonFromRaw(this, R.raw.defcfg)
+        configFile.writeText(jsonContext)
+        var newProfile = ProfileManager.create(profile)
+        Settings.selectedProfile = newProfile.id
+
+        Log.d(TAG, "<autoConfigProfile> no profile, config default profile=${configFile}")
+    }
+
 
 }

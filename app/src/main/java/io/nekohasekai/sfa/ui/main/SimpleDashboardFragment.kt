@@ -13,10 +13,12 @@ import io.nekohasekai.sfa.R
 import io.nekohasekai.sfa.bg.BoxService
 import io.nekohasekai.sfa.constant.Status
 import io.nekohasekai.sfa.databinding.FragmentSimpleDashboardBinding
+import io.nekohasekai.sfa.ktx.errorDialogBuilder
 import io.nekohasekai.sfa.ui.MainActivity
 import io.nekohasekai.sfa.utils.CommandClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class SimpleDashboardFragment : Fragment(R.layout.fragment_simple_dashboard) {
@@ -89,6 +91,17 @@ class SimpleDashboardFragment : Fragment(R.layout.fragment_simple_dashboard) {
         }
 
         binding.connectContainer.isVisible = false  // 默认不显示连接后状态
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            runCatching {
+                activity.autoConfigProfile()
+
+            }.onFailure { e ->
+                withContext(Dispatchers.Main) {
+
+                }
+            }
+        }
     }
 
     override fun onStart() {
@@ -142,6 +155,7 @@ class SimpleDashboardFragment : Fragment(R.layout.fragment_simple_dashboard) {
                 }
             }
         }
-
     }
+
+
 }

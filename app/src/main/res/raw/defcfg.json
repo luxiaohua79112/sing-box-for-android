@@ -1,0 +1,522 @@
+{
+  "dns": {
+    "fakeip": {
+      "enabled": true,
+      "inet4_range": "198.18.0.0/15",
+      "inet6_range": "fc00::/18"
+    },
+    "independent_cache": true,
+    "rules": [
+      {
+        "outbound": ["any"],
+        "server": "local"
+      },
+      {
+        "disable_cache": true,
+        "rule_set": ["AdGuardSDNSFilter", "chrome-doh"],
+        "server": "block"
+      },
+      {
+        "domain_suffix": ["kuainiujinke.com", "kuainiu.chat", "kuainiu.io"],
+        "server": "local"
+      },
+      {
+        "rule_set": [
+          "geosite-netflix",
+          "geosite-youtube",
+          "geosite-telegram",
+          "geosite-category-media",
+          "geosite-openai",
+          "geosite-speedtest",
+          "geosite-github",
+          "geosite-jetbrains",
+          "geosite-spotify",
+          "geosite-cloudflare",
+          "geosite-google"
+        ],
+        "rewrite_ttl": 1,
+        "server": "fakeip"
+      },
+      {
+        "clash_mode": "global",
+        "server": "remote"
+      },
+      {
+        "clash_mode": "direct",
+        "server": "local"
+      },
+      {
+        "rule_set": [
+          "GeoIP2-CN",
+          "geosite-cn",
+          "geosite-icloud@cn",
+          "geosite-apple@cn"
+        ],
+        "server": "local"
+      },
+      {
+        "query_type": ["A"],
+        "rewrite_ttl": 1,
+        "server": "fakeip"
+      }
+    ],
+    "servers": [
+      {
+        "tag": "remote",
+        "address": "https://8.8.8.8/dns-query",
+        "detour": "Proxy"
+      },
+      {
+        "tag": "local",
+        "address": "https://223.5.5.5/dns-query",
+        "detour": "direct"
+      },
+      {
+        "tag": "block",
+        "address": "rcode://success"
+      },
+      {
+        "tag": "fakeip",
+        "address": "fakeip"
+      }
+    ],
+    "strategy": "prefer_ipv4"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true
+    }
+  },
+  "inbounds": [
+    {
+      "auto_route": true,
+      "domain_strategy": "prefer_ipv4",
+      "endpoint_independent_nat": true,
+      "inet4_address": "172.19.0.1/30",
+      "mtu": 9000,
+      "sniff": true,
+      "strict_route": true,
+      "type": "tun"
+    },
+    {
+      "domain_strategy": "prefer_ipv4",
+      "listen": "127.0.0.1",
+      "listen_port": 2333,
+      "tag": "socks-in",
+      "type": "socks",
+      "users": []
+    },
+    {
+      "domain_strategy": "prefer_ipv4",
+      "listen": "127.0.0.1",
+      "listen_port": 2334,
+      "tag": "mixed-in",
+      "type": "mixed",
+      "users": []
+    }
+  ],
+  "log": {
+    "disabled": false,
+    "level": "info",
+    "output": "kn.log",
+    "timestamp": true
+  },
+  "outbounds": [
+    {
+      "tag": "Proxy",
+      "type": "selector",
+      "default": "香港T2 From 上海T2",
+      "outbounds": [
+        "上海O1 From 上海T1",
+        "香港T1 From 上海T1",
+        "香港A1 From 上海T1",
+        "香港T2 From 上海T2",
+        "香港U1 From 广州U1",
+        "印尼O1 From 广州U1",
+        "新加坡U1 From 广州U1",
+        "新加坡U1"
+      ]
+    },
+    {
+      "tag": "openai",
+      "type": "urltest",
+      "outbounds": ["新加坡U1 From 广州U1", "新加坡U1"]
+    },
+    {
+      "tag": "urltest",
+      "type": "urltest",
+      "outbounds": [
+        "上海O1 From 上海T1",
+        "香港T1 From 上海T1",
+        "香港A1 From 上海T1",
+        "香港T2 From 上海T2",
+        "香港U1 From 广州U1",
+        "印尼O1 From 广州U1",
+        "新加坡U1 From 广州U1",
+        "新加坡U1"
+      ]
+    },
+    {
+      "tag": "kn-internal",
+      "type": "selector",
+      "outbounds": ["上海O1 From 上海T1"]
+    },
+    {
+      "password": "ujTLGJ34J0vXC",
+      "server": "118.242.26.46",
+      "server_port": 35753,
+      "tag": "上海O1 From 上海T1",
+      "type": "shadowsocks",
+      "method": "chacha20-ietf-poly1305",
+      "network": "tcp"
+    },
+    {
+      "password": "uxTHFJkNfVXC",
+      "server": "118.242.26.46",
+      "server_port": 35752,
+      "tag": "香港T1 From 上海T1",
+      "type": "shadowsocks",
+      "method": "chacha20-ietf-poly1305",
+      "network": "tcp"
+    },
+    {
+      "password": "uxTHFJkNfVXC",
+      "server": "118.242.26.46",
+      "server_port": 35751,
+      "tag": "香港A1 From 上海T1",
+      "type": "shadowsocks",
+      "method": "chacha20-ietf-poly1305",
+      "network": "tcp"
+    },
+    {
+      "password": "6zZ6Nf8W",
+      "server": "111.231.81.24",
+      "server_port": 18080,
+      "tag": "香港T2 From 上海T2",
+      "type": "shadowsocks",
+      "method": "chacha20-ietf-poly1305",
+      "network": "tcp"
+    },
+    {
+      "password": "ujTIFJ33J0vXC",
+      "server": "106.75.176.184",
+      "server_port": 35711,
+      "tag": "香港U1 From 广州U1",
+      "type": "shadowsocks",
+      "method": "chacha20-ietf-poly1305",
+      "network": "tcp"
+    },
+    {
+      "password": "ukTHHuf93XC",
+      "server": "106.75.176.184",
+      "server_port": 35712,
+      "tag": "印尼O1 From 广州U1",
+      "type": "shadowsocks",
+      "method": "chacha20-ietf-poly1305",
+      "network": "tcp"
+    },
+    {
+      "password": "ukTHHuf93XC",
+      "server": "106.75.176.184",
+      "server_port": 35713,
+      "tag": "新加坡U1 From 广州U1",
+      "type": "shadowsocks",
+      "method": "chacha20-ietf-poly1305",
+      "network": "tcp"
+    },
+    {
+      "password": "J7duGYkJI7PM",
+      "server": "152.32.175.6",
+      "server_port": 35753,
+      "tag": "广州U2 From 香港U2",
+      "type": "shadowsocks",
+      "method": "chacha20-ietf-poly1305",
+      "network": "tcp"
+    },
+    {
+      "password": "ukTHHuf93XC",
+      "server": "152.32.239.108",
+      "server_port": 35714,
+      "tag": "新加坡U1 From 香港U1",
+      "type": "shadowsocks",
+      "method": "chacha20-ietf-poly1305",
+      "network": "tcp"
+    },
+    {
+      "password": "ukTHHuf93XC",
+      "server": "165.154.203.69",
+      "server_port": 35714,
+      "tag": "新加坡U1",
+      "type": "shadowsocks",
+      "method": "chacha20-ietf-poly1305",
+      "network": "tcp"
+    },
+    {
+      "tag": "direct",
+      "type": "direct"
+    },
+    {
+      "tag": "block",
+      "type": "block"
+    },
+    {
+      "tag": "dns-out",
+      "type": "dns"
+    }
+  ],
+  "route": {
+    "rule_set": [
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-netflix",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/netflix.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geoip-netflix",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/netflix.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-youtube",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/youtube.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-telegram",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/telegram.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geoip-telegram",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/telegram.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-category-media",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/category-media.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-openai",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/openai.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-speedtest",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/speedtest.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-github",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/github.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-jetbrains",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/jetbrains.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-spotify",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/spotify.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-cloudflare",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cloudflare.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geoip-cloudflare",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/cloudflare.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-google",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/google.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "GeoIP2-CN",
+        "url": "https://wiki.jokin.uk/cnip2.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-cn",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-icloud@cn",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/icloud@cn.srs"
+      },
+      {
+        "type": "remote",
+        "format": "binary",
+        "download_detour": "香港T2 From 上海T2",
+        "tag": "geosite-apple@cn",
+        "url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/apple@cn.srs"
+      },
+      {
+        "format": "binary",
+        "tag": "AdGuardSDNSFilter",
+        "type": "remote",
+        "download_detour": "香港T2 From 上海T2",
+        "url": "https://raw.githubusercontent.com/xmdhs/sing-box-ruleset/rule-set/AdGuardSDNSFilter.srs"
+      },
+      {
+        "format": "source",
+        "tag": "chrome-doh",
+        "type": "remote",
+        "download_detour": "香港T2 From 上海T2",
+        "url": "https://gist.githubusercontent.com/xmdhs/71fc5ff6ef29f5ecaf2c52b8de5c3172/raw/chrome-doh.json"
+      }
+    ],
+    "rules": [
+      {
+        "protocol": "dns",
+        "outbound": "dns-out"
+      },
+      {
+        "outbound": "dns-out",
+        "port": 53
+      },
+      {
+        "clash_mode": "direct",
+        "outbound": "direct"
+      },
+      {
+        "clash_mode": "global",
+        "outbound": "Proxy"
+      },
+      {
+        "ip_is_private": true,
+        "outbound": "direct"
+      },
+      {
+        "outbound": "block",
+        "rule_set": "AdGuardSDNSFilter"
+      },
+      {
+        "domain_suffix": [
+          "edu.cn",
+          "gov.cn",
+          "mil.cn",
+          "ac.cn",
+          "com.cn",
+          "net.cn",
+          "org.cn",
+          "中国",
+          "中國"
+        ],
+        "outbound": "direct"
+      },
+      {
+        "domain_suffix": ["kuainiujinke.com", "kuainiu.chat", "kuainiu.io"],
+        "outbound": "kn-internal"
+      },
+      {
+        "outbound": "direct",
+        "rule_set": [
+          "GeoIP2-CN",
+          "geosite-cn",
+          "geosite-icloud@cn",
+          "geosite-apple@cn"
+        ]
+      },
+      {
+        "rule_set": "geosite-netflix",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geoip-netflix",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geosite-youtube",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geosite-telegram",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geoip-telegram",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geosite-category-media",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geosite-openai",
+        "outbound": "openai"
+      },
+      {
+        "rule_set": "geosite-speedtest",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geosite-github",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geosite-jetbrains",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geosite-spotify",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geosite-cloudflare",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geoip-cloudflare",
+        "outbound": "Proxy"
+      },
+      {
+        "rule_set": "geosite-google",
+        "outbound": "Proxy"
+      }
+    ],
+    "auto_detect_interface": true,
+    "final": "Proxy"
+  }
+}
