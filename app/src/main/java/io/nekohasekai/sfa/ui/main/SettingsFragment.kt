@@ -14,6 +14,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.nekohasekai.libbox.Libbox
 import io.nekohasekai.sfa.Application
 import io.nekohasekai.sfa.R
@@ -77,8 +78,14 @@ class SettingsFragment : Fragment() {
             Vendor.checkUpdate(activity, true)
         }
         binding.openPrivacyPolicyButton.setOnClickListener {
-            activity.launchCustomTab("https://sing-box.sagernet.org/clients/privacy/")
+            val builder = MaterialAlertDialogBuilder(requireContext())
+            builder.setTitle(getString(R.string.privacy_title))
+            builder.setMessage(getString(R.string.privacy_warning))
+            builder.setPositiveButton(R.string.ok) { _, _ ->
+            }
+            builder.show()
         }
+
         binding.disableMemoryLimit.addTextChangedListener {
             lifecycleScope.launch(Dispatchers.IO) {
                 val newValue = EnabledType.valueOf(requireContext(), it).boolValue
@@ -92,9 +99,10 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        binding.dontKillMyAppButton.setOnClickListener {
-            it.context.launchCustomTab("https://dontkillmyapp.com/")
-        }
+        //binding.dontKillMyAppButton.setOnClickListener {
+        //    it.context.launchCustomTab("https://dontkillmyapp.com/")
+        //}
+        binding.dontKillMyAppButton.isVisible = false  // 阅读更多按钮不用显示
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             binding.requestIgnoreBatteryOptimizationsButton.setOnClickListener {
@@ -113,7 +121,7 @@ class SettingsFragment : Fragment() {
             startActivity(Intent(requireContext(), DebugActivity::class.java))
         }
         binding.startSponserButton.setOnClickListener {
-            activity.launchCustomTab("https://sekai.icu/sponsors/")
+       //     activity.launchCustomTab("https://sekai.icu/sponsors/")
         }
         lifecycleScope.launch(Dispatchers.IO) {
             reloadSettings()

@@ -161,4 +161,9 @@
     <string name="location_permission_description"><![CDATA[您的个人资料包含 <strong><tt>wifi_ssid</tt> 或 <tt>wifi_bssid</tt> 路由规则</strong>。为了使它们正常工作，sing-box 在<strong>后台</strong>使用 <strong>位置</strong> 权限来获取有关所连接 Wi-Fi 网络的信息。该信息将<strong>仅用于路由目的</strong>。]]></string>
     <string name="location_permission_background_description"><![CDATA[在 Android 10 及更高版本中，需要<strong>后台位置</strong>权限。选择<strong>始终允许</strong>以授予权限。]]></string>
     <string name="open_settings">打开设置</string>
+
+    <string name="privacy_title">隐私政策</string>
+    <string name="privacy_warning">KN 集团客户端软件不会收集或共享个人数据，软件生成的数据始终存储在您的设备上。</string>
+    <string name="about">关于</string>
+    <string name="about_info">本应用由 快牛智能 集团开发.</string>
 </resources>
